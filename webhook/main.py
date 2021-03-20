@@ -7,8 +7,12 @@ from aiogram import types
 from aiogram.dispatcher.webhook import BaseResponse
 from aiogram.utils.exceptions import TimeoutWarning
 from aiogram import Bot, Dispatcher
+import logging
 
 RESPONSE_TIMEOUT = 55
+
+log = logging.getLogger(__name__)
+log.setLevel(level=logging.DEBUG)
 
 
 class WebhookRequestHandler:
@@ -45,13 +49,15 @@ class WebhookRequestHandler:
 
         results = await self.process_update(update)
         response = self.get_response(results)
+        log.warning("testtttt")
+        log.warning(json.dumps([r.get_response() for r in response]))
 
         return {
             "headers": {
                 "Content-Type": "application/json",
             },
             "statusCode": 200,
-            "body": json.dumps(response.get_response()) if response else "ok",
+            "body": json.dumps(json.dumps([r.get_response() for r in response])) if response else "ok",
         }
 
     async def process_update(self, update):
@@ -127,6 +133,9 @@ class WebhookRequestHandler:
         """
         if results is None:
             return None
+        results_clean = []
         for result in itertools.chain.from_iterable(results):
             if isinstance(result, BaseResponse):
-                return result
+                results_clean.append(result)
+        if len(results_clean) > 0:
+            return result

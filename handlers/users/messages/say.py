@@ -6,7 +6,11 @@ from stickers import TextPrinter
 
 
 async def say(message: types.Message):
-    if message.reply_to_message is None or not message.reply_to_message.sticker.is_animated:
+    if (
+        message.reply_to_message is None
+        or not message.reply_to_message.sticker
+        or not message.reply_to_message.sticker.is_animated
+    ):
         raise SkipHandler
 
     f = io.BytesIO()
