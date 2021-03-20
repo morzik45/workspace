@@ -138,8 +138,8 @@ class WebhookRequestHandler:
         results_clean = []
         log.info(results)
         for lists in itertools.chain.from_iterable(results):
-            if isinstance(result, BaseResponse):
-                return result
+            if isinstance(lists, BaseResponse):
+                return lists
             elif isinstance(lists, List):
                 for result in lists:
                     if isinstance(result, BaseResponse):
