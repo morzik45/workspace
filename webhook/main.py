@@ -138,4 +138,4 @@ class WebhookRequestHandler:
             if isinstance(result, BaseResponse):
                 results_clean.append(result)
         if len(results_clean) > 0:
-            return result
+            return results_clean

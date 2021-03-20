@@ -12,9 +12,8 @@ async def sticker(message: types.Message):
     logging.warning("sticker")
 
     # await message.delete()
-    return DeleteMessage(chat_id=message.chat.id, message_id=message.message_id)
-    # , SendSticker(
-    #     message.from_user.id,
-    #     sticker=message.sticker.file_id,
-    #     reply_markup=ForceReply(True),
-    # )
+    return DeleteMessage(chat_id=message.chat.id, message_id=message.message_id), SendSticker(
+        message.from_user.id,
+        sticker=message.sticker.file_id,
+        reply_markup=ForceReply(True),
+    )
