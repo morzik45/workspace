@@ -8,17 +8,18 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: prod
     steps:
       - uses: actions/checkout@master
       - uses: goodsmileduck/yandex-serverless-action@v1
         with:
-          token: ${{ env.prod.YC_TOKEN }}
-          function_id: ${{ env.prod.YC_FUNCTION_ID }}
+          token: ${{ secrets.YC_TOKEN }}
+          function_id: ${{ secrets.YC_FUNCTION_ID }}
           runtime: 'python38'
           entrypoint: 'index.handler'
-          environment: TG_TOKEN=${{ env.prod.TG_TOKEN }},YC_ACCESS_KEY=${{ env.prod.YC_ACCESS_KEY }},YC_PRIVATE_KEY=${{ env.prod.YC_PRIVATE_KEY }},DB_ENDPOINT=${{ env.prod.DB_ENDPOINT }},DB_DATABASE=${{ env.prod.DB_DATABASE }}
+          environment: TG_TOKEN=${{ secrets.TG_TOKEN }},YC_ACCESS_KEY=${{ secrets.YC_ACCESS_KEY }},YC_PRIVATE_KEY=${{ secrets.YC_PRIVATE_KEY }},DB_ENDPOINT=${{ secrets.DB_ENDPOINT }},DB_DATABASE=${{ secrets.DB_DATABASE }}
           memory: '128'
-          execution_timeout: '5'
-          service_account: ${{ env.prod.YC_SERVICE_ACCOUNT }}
+          execution_timeout: '7'
+          service_account: ${{ secrets.YC_SERVICE_ACCOUNT }}
           source: '.'
           exclude: '.git/,.github/,/.gitignore,.README.md,.vscode,.devcontainer'
