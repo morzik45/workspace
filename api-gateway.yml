@@ -1,0 +1,25 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  version: 1.0.0
+servers:
+- url: <URL>
+paths:
+  /webhook/{token}:
+    post:
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: <YC_FUNCTION_ID>
+        tag: $latest
+        service_account_id: <YC_SERVICE_ACCOUNT>
+      summary: example bot update
+      operationId: get-update
+      tags:
+        - example
+      parameters:
+      - description: Return bot token
+        in: path
+        name: token
+        required: false
+        schema:
+          type: string

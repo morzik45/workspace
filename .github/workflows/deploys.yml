@@ -1,0 +1,24 @@
+name: Push and Deploy Serverless function
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: goodsmileduck/yandex-serverless-action@v1
+        with:
+          token: ${{ secrets.YC_TOKEN }}
+          function_id: ${{ secrets.YC_FUNCTION_ID }}
+          runtime: 'python38'
+          entrypoint: 'index.handler'
+          environment: TG_TOKEN=${{ secrets.TG_TOKEN }},YC_ACCESS_KEY=${{ secrets.YC_ACCESS_KEY }},YC_PRIVATE_KEY=${{ secrets.YC_PRIVATE_KEY }},DB_ENDPOINT=${{ secrets.DB_ENDPOINT }},DB_DATABASE=${{ secrets.DB_DATABASE }}
+          memory: '128'
+          execution_timeout: '5'
+          service_account: ${{ secrets.YC_SERVICE_ACCOUNT }}
+          source: '.'
+          exclude: '.git/,.github/,/.gitignore,.README.md,.vscode,.devcontainer'

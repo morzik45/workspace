@@ -1,0 +1,6 @@
+aiogram==2.12
+ydb==0.0.50.843132462
+iso8601==0.1.14
+yandexcloud==0.76.0
+lottie==0.6.6
+fonttools==4.21.1
