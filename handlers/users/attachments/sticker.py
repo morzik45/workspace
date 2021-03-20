@@ -9,7 +9,6 @@ async def sticker(message: types.Message):
         return
 
     await message.answer_sticker(
-        message.from_user.id,
         sticker=message.sticker.file_id,
         reply_markup=ForceReply(True),
     )
