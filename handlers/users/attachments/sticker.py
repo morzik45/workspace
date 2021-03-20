@@ -1,7 +1,6 @@
 from aiogram.dispatcher.webhook import SendSticker, DeleteMessage
 from aiogram import types
 from aiogram.types.force_reply import ForceReply
-import logging
 
 
 async def sticker(message: types.Message):
@@ -9,11 +8,12 @@ async def sticker(message: types.Message):
         await message.answer("Нужен анимированный стикер =(")
         return
 
-    logging.warning("sticker")
-
     # await message.delete()
-    return DeleteMessage(chat_id=message.chat.id, message_id=message.message_id), SendSticker(
-        message.from_user.id,
-        sticker=message.sticker.file_id,
-        reply_markup=ForceReply(True),
-    )
+    return [
+        DeleteMessage(chat_id=message.chat.id, message_id=message.message_id),
+        SendSticker(
+            message.from_user.id,
+            sticker=message.sticker.file_id,
+            reply_markup=ForceReply(True),
+        ),
+    ]

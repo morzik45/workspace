@@ -50,7 +50,8 @@ class WebhookRequestHandler:
         results = await self.process_update(update)
         response = self.get_response(results)
         log.warning("testtttt")
-        log.warning(json.dumps([r.get_response() for r in response]))
+        if response is not None:
+            log.warning(json.dumps([r.get_response() for r in response]))
 
         return {
             "headers": {
@@ -137,5 +138,7 @@ class WebhookRequestHandler:
         for result in itertools.chain.from_iterable(results):
             if isinstance(result, BaseResponse):
                 results_clean.append(result)
+        log.info(results_clean)
         if len(results_clean) > 0:
+
             return results_clean
