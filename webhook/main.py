@@ -136,9 +136,12 @@ class WebhookRequestHandler:
         if results is None:
             return None
         results_clean = []
+        log.info(results)
         for lists in itertools.chain.from_iterable(results):
-            if isinstance(lists, List):
-                for result in itertools.chain.from_iterable(lists):
+            if isinstance(result, BaseResponse):
+                return result
+            elif isinstance(lists, List):
+                for result in lists:
                     if isinstance(result, BaseResponse):
                         results_clean.append(result)
         log.info(results_clean)
