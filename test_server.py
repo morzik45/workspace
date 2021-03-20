@@ -1,7 +1,7 @@
 import logging
 import os
 
-from aiogram import Bot
+from aiogram import Bot, filters
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils.executor import start_webhook
@@ -38,6 +38,7 @@ async def on_startup(dp):
     dp.register_message_handler(users.commands.start, commands=["start"])
     dp.register_message_handler(users.commands.bot_help, commands=["help"])
     dp.register_message_handler(users.attachments.sticker, content_types=ContentType.STICKER)
+    dp.register_message_handler(users.messages.say, filters.IsReplyFilter)
 
     await bot.set_webhook(WEBHOOK_URL)
     # insert code here to run it after start
