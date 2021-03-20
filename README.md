@@ -1,1 +1,1 @@
-# telegram-bot-yandex.cloud-serverless-template
+# telegram-bot-yandex.cloud
