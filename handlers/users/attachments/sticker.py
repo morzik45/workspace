@@ -15,10 +15,11 @@ async def sticker(message: types.Message):
     tp = TextPrinter(f)
     output = tp.add_text(top_line="Ну начнём", bottom_line="в очередной раз...")
 
-    # await message.bot.send_sticker(
-    #     message.from_user.id, types.InputFile(output, filename=".".join([message.sticker.file_unique_id, "tgs"]))
-    # )
-
-    return SendSticker(
+    await message.bot.send_sticker(
         message.from_user.id, types.InputFile(output, filename=".".join([message.sticker.file_unique_id, "tgs"]))
     )
+
+    # return SendSticker(
+    #     chat_id=message.from_user.id,
+    #     sticker=types.InputFile(output, filename=".".join([message.sticker.file_unique_id, "tgs"])),
+    # )

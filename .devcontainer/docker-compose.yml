@@ -18,6 +18,9 @@ services:
     volumes:
       - ..:/workspace:cached
 
+    ports:
+      - 3001:3001
+
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
 
