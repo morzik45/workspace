@@ -6,6 +6,7 @@ from aiogram.contrib.middlewares.logging import LoggingMiddleware
 
 from webhook import WebhookRequestHandler
 from handlers import register_handlers
+from middlewares import UserMiddleware
 
 
 logging.basicConfig(level=logging.INFO)
@@ -13,6 +14,7 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=os.environ.get("TG_TOKEN", 0), parse_mode="HTML", validate_token=False)
 dp = Dispatcher(bot=bot)
 dp.middleware.setup(LoggingMiddleware())
+dp.middleware.setup(UserMiddleware())
 
 
 async def handler(event, context):

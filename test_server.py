@@ -8,6 +8,7 @@ from aiogram.utils.executor import start_webhook
 from aiogram.types import ContentType
 
 from handlers import users
+from middlewares import UserMiddleware
 
 try:
     from dotenv import load_dotenv
@@ -32,6 +33,7 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 dp.middleware.setup(LoggingMiddleware())
+dp.middleware.setup(UserMiddleware())
 
 
 async def on_startup(dp):

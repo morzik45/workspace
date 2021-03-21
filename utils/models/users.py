@@ -68,7 +68,7 @@ class Users(object):
 
             self._storage.transaction(query=query2, parameters=parameters2)
 
-        result = self._storage.transaction(query=query, parameters=parameters)[0].rows
+            result = self._storage.transaction(query=query, parameters=parameters)[0].rows
 
         r = result[0]
         self.user_id = r.user_id
