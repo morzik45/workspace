@@ -17,7 +17,7 @@ jobs:
           function_id: ${{ secrets.YC_FUNCTION_ID }}
           runtime: 'python38'
           entrypoint: 'index.handler'
-          environment: TG_TOKEN=${{ secrets.TG_TOKEN }},YC_ACCESS_KEY=${{ secrets.YC_ACCESS_KEY }},YC_PRIVATE_KEY=${{ secrets.YC_PRIVATE_KEY }},DB_ENDPOINT=${{ secrets.DB_ENDPOINT }},DB_DATABASE=${{ secrets.DB_DATABASE }}
+          environment: TG_TOKEN=${{ secrets.TG_TOKEN }},YC_SERVICE_ACCOUNT=${{ secrets.YC_SERVICE_ACCOUNT }},YC_ACCESS_KEY=${{ secrets.YC_ACCESS_KEY }},YC_PRIVATE_KEY=${{ secrets.YC_PRIVATE_KEY }},DB_ENDPOINT=${{ secrets.DB_ENDPOINT }},DB_DATABASE=${{ secrets.DB_DATABASE }}
           memory: '128'
           execution_timeout: '7'
           service_account: ${{ secrets.YC_SERVICE_ACCOUNT }}
