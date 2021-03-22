@@ -144,7 +144,7 @@ class TextPrinter(object):
 
         return lottie.objects.animation.Animation.load(lottie_json)
 
-    def add_text(self, top_line, bottom_line=""):
+    def add_text(self, top_line: str = "", middle_line: str = "", bottom_line: str = ""):
         layer = lottie.objects.ShapeLayer()
         self.tg_sticker.insert_layer(0, layer)
 
@@ -152,6 +152,8 @@ class TextPrinter(object):
             layer.add_shape(self.create_text_line(top_line))
         if bottom_line is not None and len(bottom_line):
             layer.add_shape(self.create_text_line(bottom_line, bottom=True))
+        if middle_line is not None and len(middle_line):
+            layer.add_shape(self.create_text_line(middle_line, middle=True))
 
         validate_and_fix(self.tg_sticker)
 
@@ -165,7 +167,7 @@ class TextPrinter(object):
         output.seek(0)
         return output
 
-    def create_text_line(self, text, bottom=False):
+    def create_text_line(self, text: str, middle: bool = False, bottom: bool = False):
         line_group = lottie.objects.Group()
 
         line_shapes_group = FontRenderer(FONT_PATH).render(text, size=64, pos=lottie.nvector.NVector(0, 0))
@@ -197,13 +199,21 @@ class TextPrinter(object):
             #                           self.tg_sticker.out_point // 1.7, 7, 7)
 
         line_group_x = (512 - line_shapes_group.bounding_box().width) / 2
-        line_group_y = 80 if not bottom else 512 - 50
+        line_group_y = 80
+        if bottom:
+            line_group_y = 512 - 50
+        elif middle:
+            line_group_y = 512 / 2 - 30
 
         line_group.transform.position.value.x = line_group_x
         line_group.transform.position.value.y = line_group_y
 
         if self.selected_animation == "spring_pull_right":
-            line_group.transform.position.value.x = 512 if not bottom else -512
+            line_group.transform.position.value.x = 512
+            if bottom:
+                line_group.transform.position.value.x = -512
+            if middle:
+                line_group.transform.position.value.x = 0
             animation.spring_pull(
                 line_group.transform.position,
                 lottie.Point(line_group_x, line_group_y),

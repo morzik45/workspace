@@ -18,9 +18,14 @@ async def say(message: types.Message):
     await message.reply_to_message.sticker.download(f)
     tp = TextPrinter(f)
 
-    list_texts = textwrap.fill(message.text, 16).split("\n")
+    list_texts = textwrap.fill(message.text, 15).split("\n")
 
-    output = tp.add_text(top_line=list_texts[0], bottom_line=list_texts[1] if len(list_texts) > 1 else None)
+    if len(list_texts) == 1:
+        output = tp.add_text(top_line=list_texts[0])
+    if len(list_texts) == 2:
+        output = tp.add_text(top_line=list_texts[0], bottom_line=list_texts[1])
+    if len(list_texts) >= 3:
+        output = tp.add_text(top_line=list_texts[0], middle_line=list_texts[1], bottom_line=list_texts[2])
 
     await message.bot.send_sticker(
         message.from_user.id,
