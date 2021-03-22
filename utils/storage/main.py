@@ -1,4 +1,3 @@
-import contextlib
 import logging
 import os
 import traceback
@@ -42,6 +41,8 @@ class Storage(object):
         self._driver_config = self.make_driver_config()
         self._full_path: str = os.path.join(self._database, path)
 
+        self.session_pool = self.session_pool_maker(self._driver_config)
+
     def transaction(self, query, parameters={}):
         def make_transaction(session: ydb.Session):
             tx = session.transaction(ydb.SerializableReadWrite()).begin()
@@ -55,8 +56,7 @@ class Storage(object):
                 commit_tx=True,
             )
 
-        with self.session_pool_context(self._driver_config) as session_pool:
-            return session_pool.retry_operation_sync(make_transaction)
+        return self.session_pool.retry_operation_sync(make_transaction)
 
     def make_driver_config(self):
         return ydb.DriverConfig(
@@ -71,26 +71,17 @@ class Storage(object):
             ),
         )
 
-    @contextlib.contextmanager
-    def session_pool_context(self, driver_config: ydb.DriverConfig, size=5, workers_threads_count=2):
-        with ydb.Driver(driver_config) as driver:
-            try:
-                logging.info("connecting to the database")
-                driver.wait(timeout=5)
-            except TimeoutError:
-                logging.critical(
-                    f"connection failed\n" f"last reported errors by discovery: {driver.discovery_debug_details()}"
-                )
-                logf = open("error.log", "w")
-                traceback.print_exc(file=logf)
-                logf.close()
-                raise
-            with ydb.SessionPool(driver, size=size, workers_threads_count=workers_threads_count) as session_pool:
-                try:
-                    yield session_pool
-
-                except Exception as e:
-                    logging.critical(f"failed to create session pool due to {repr(e)}")
-                    logf = open("error.log", "w")
-                    traceback.print_exc(file=logf)
-                    logf.close()
+    def session_pool_maker(self, driver_config: ydb.DriverConfig, size=1, workers_threads_count=1):
+        driver = ydb.Driver(driver_config)
+        try:
+            logging.info("connecting to the database")
+            driver.wait(timeout=5)
+        except TimeoutError:
+            logging.critical(
+                f"connection failed\n" f"last reported errors by discovery: {driver.discovery_debug_details()}"
+            )
+            logf = open("error.log", "w")
+            traceback.print_exc(file=logf)
+            logf.close()
+            raise
+        return ydb.SessionPool(driver, size=size, workers_threads_count=workers_threads_count)

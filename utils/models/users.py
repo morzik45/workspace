@@ -92,5 +92,4 @@ class Users(object):
                 .with_primary_key("user_id"),
             )
 
-        with self._storage.session_pool_context(self._storage._driver_config) as session_pool:
-            return session_pool.retry_operation_sync(make_transaction)
+        self._storage.session_pool.retry_operation_sync(make_transaction)
