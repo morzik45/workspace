@@ -6,7 +6,7 @@ from utils.storage import Storage
 
 
 class Users(object):
-    __slots__ = ("user_id", "username", "lang", "refferal", "created_at", "value", "_storage")
+    __slots__ = ("user_id", "username", "lang", "refferal", "created_at", "stickers", "_storage")
 
     def __init__(
         self,
@@ -15,7 +15,7 @@ class Users(object):
         lang: str = "ru",
         refferal: str = "",
         created_at: datetime = datetime.utcnow(),
-        value: int = 0,
+        stickers: int = 0,
         storage: Storage = None,
     ):
 
@@ -52,18 +52,18 @@ class Users(object):
                 DECLARE $lang AS Utf8;
                 DECLARE $refferal AS Utf8;
                 DECLARE $created_at AS DateTime;
-                DECLARE $value AS Int64;
-                INSERT INTO users (user_id, username, lang, refferal, created_at, value) VALUES
-                ($user_id, $username, $lang, $refferal, $created_at, $value);
+                DECLARE $stickers AS Int64;
+                INSERT INTO users (user_id, username, lang, refferal, created_at, stickers) VALUES
+                ($user_id, $username, $lang, $refferal, $created_at, $stickers);
                 """
 
             parameters2 = {
                 "$user_id": int(user_id),
                 "$username": username,
                 "$lang": lang,
-                "$refferal": refferal,
+                "$refferal": refferal if refferal is not None else "",
                 "$created_at": int(datetime.utcnow().timestamp()),
-                "$value": 0,
+                "$stickers": 0,
             }
 
             self._storage.transaction(query=query2, parameters=parameters2)
@@ -76,7 +76,7 @@ class Users(object):
         self.lang = r.lang
         self.refferal = r.refferal
         self.created_at = datetime.fromtimestamp(r.created_at)
-        self.value = r.value
+        self.stickers = r.stickers
 
     def __create_table(self):
         def make_transaction(session: ydb.Session):
@@ -88,8 +88,23 @@ class Users(object):
                 .with_column(ydb.Column("lang", ydb.OptionalType(ydb.PrimitiveType.Utf8)))
                 .with_column(ydb.Column("refferal", ydb.OptionalType(ydb.PrimitiveType.Utf8)))
                 .with_column(ydb.Column("created_at", ydb.OptionalType(ydb.PrimitiveType.Datetime)))
-                .with_column(ydb.Column("value", ydb.OptionalType(ydb.PrimitiveType.Int64)))
+                .with_column(ydb.Column("stickers", ydb.OptionalType(ydb.PrimitiveType.Int64)))
                 .with_primary_key("user_id"),
             )
 
         self._storage.session_pool.retry_operation_sync(make_transaction)
+
+    def stickers_count_incr(self) -> None:
+        query = f"""
+            PRAGMA TablePathPrefix("{self._storage._full_path}");
+            DECLARE $user_id AS Uint64;
+            UPDATE users
+            SET stickers  = stickers + 1
+            WHERE user_id = $user_id;
+            """
+        parameters = {
+            "$user_id": int(self.user_id),
+        }
+
+        self._storage.transaction(query=query, parameters=parameters)
+        self.stickers += 1

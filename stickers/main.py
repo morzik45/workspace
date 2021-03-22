@@ -203,7 +203,7 @@ class TextPrinter(object):
         if bottom:
             line_group_y = 512 - 50
         elif middle:
-            line_group_y = 512 / 2 - 30
+            line_group_y = 512 / 2 + 30
 
         line_group.transform.position.value.x = line_group_x
         line_group.transform.position.value.y = line_group_y

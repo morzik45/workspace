@@ -1,11 +1,12 @@
 import io
 import textwrap
+from utils.models.users import Users
 from aiogram import types
 from aiogram.dispatcher.handler import SkipHandler
 from stickers import TextPrinter
 
 
-async def say(message: types.Message):
+async def say(message: types.Message, user: Users):
     if (
         message.reply_to_message is None
         or not message.reply_to_message.sticker
@@ -31,3 +32,5 @@ async def say(message: types.Message):
         message.from_user.id,
         types.InputFile(output, filename=".".join([message.reply_to_message.sticker.file_unique_id, "tgs"])),
     )
+
+    user.stickers_count_incr()
